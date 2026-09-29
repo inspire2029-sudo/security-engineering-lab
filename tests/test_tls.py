@@ -42,8 +42,8 @@ def test_inspect_certificate_parses_certificate_and_calculates_remaining_days(
     mock_context_factory, mock_create_connection, mock_datetime
 ):
     certificate = {
-        "subject": ((( "commonName", "example.com"),),),
-        "issuer": ((( "commonName", "Test CA"),),),
+        "subject": ((("commonName", "example.com"),),),
+        "issuer": ((("commonName", "Test CA"),),),
         "serialNumber": "ABC123",
         "notBefore": "Jan 01 00:00:00 2030 GMT",
         "notAfter": "Jan 11 00:00:00 2030 GMT",
