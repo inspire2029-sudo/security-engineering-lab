@@ -1,4 +1,5 @@
 import json
+from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 import pytest
@@ -70,8 +71,16 @@ def test_inspect_headers_uses_timeout_and_follows_redirects(mock_get):
 @patch("security_engineering_lab.cli.inspect_headers")
 def test_cli_json_output(mock_inspect, monkeypatch, capsys):
     mock_inspect.return_value = [
-        Mock(name="Content-Security-Policy", present=True, value="default-src 'self'"),
-        Mock(name="Strict-Transport-Security", present=False, value=None),
+        SimpleNamespace(
+            name="Content-Security-Policy",
+            present=True,
+            value="default-src 'self'",
+        ),
+        SimpleNamespace(
+            name="Strict-Transport-Security",
+            present=False,
+            value=None,
+        ),
     ]
 
     monkeypatch.setattr(
