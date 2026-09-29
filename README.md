@@ -22,6 +22,23 @@ The tool validates the target URL, follows redirects, applies a configurable req
 
 It is intentionally limited to passive inspection. It does not exploit endpoints, submit payloads, or attempt to bypass controls.
 
+### Module 02 — TLS Certificate Inspection
+
+The second module performs passive inspection of the TLS certificate presented by an HTTPS server.
+
+It extracts:
+
+- hostname
+- certificate subject
+- issuer
+- serial number
+- validity period
+- remaining validity in days
+
+The implementation uses Python's standard TLS stack and validates the HTTPS target before opening the connection.
+
+It does not weaken certificate verification or attempt exploitation.
+
 ## Project layout
 
 ```text
@@ -30,9 +47,11 @@ security-engineering-lab/
 │   └── security_engineering_lab/
 │       ├── __init__.py
 │       ├── headers.py
-│       └── cli.py
+│       ├── cli.py
+│       └── tls.py
 ├── tests/
-│   └── test_headers.py
+│   ├── test_headers.py
+│   └── test_tls.py
 ├── .github/
 │   └── workflows/
 │       └── tests.yml
@@ -51,7 +70,7 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 ```
 
-Inspect a URL:
+Inspect HTTP security headers:
 
 ```bash
 python -m security_engineering_lab.cli https://example.com
@@ -63,10 +82,22 @@ Use JSON output:
 python -m security_engineering_lab.cli https://example.com --json
 ```
 
-Set a custom request timeout:
+Set a custom HTTP timeout:
 
 ```bash
 python -m security_engineering_lab.cli https://example.com --timeout 5
+```
+
+Inspect a TLS certificate:
+
+```bash
+python -m security_engineering_lab.tls_cli https://example.com
+```
+
+Use JSON output for TLS inspection:
+
+```bash
+python -m security_engineering_lab.tls_cli https://example.com --json
 ```
 
 Run the test suite:
@@ -77,7 +108,7 @@ pytest
 
 ## Engineering coverage
 
-Module 01 covers:
+### Module 01
 
 - URL validation
 - HTTP requests
@@ -90,6 +121,18 @@ Module 01 covers:
 - unit testing
 - mocked network boundaries
 - GitHub Actions CI
+
+### Module 02
+
+- HTTPS URL validation
+- TCP connection handling
+- TLS server-name indication
+- certificate parsing
+- certificate validity analysis
+- structured result objects
+- CLI and JSON output
+- network and TLS error handling
+- mocked TLS tests
 
 ## Scope
 
