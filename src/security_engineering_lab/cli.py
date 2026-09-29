@@ -12,6 +12,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("url", help="URL to inspect")
     parser.add_argument(
+        "--timeout",
+        type=float,
+        default=10.0,
+        help="HTTP request timeout in seconds (default: 10).",
+    )
+    parser.add_argument(
         "--json",
         action="store_true",
         dest="as_json",
@@ -35,7 +41,7 @@ def main() -> None:
     args = build_parser().parse_args()
 
     try:
-        checks = inspect_headers(args.url)
+        checks = inspect_headers(args.url, timeout=args.timeout)
     except (RuntimeError, ValueError) as exc:
         raise SystemExit(f"error: {exc}") from exc
 
