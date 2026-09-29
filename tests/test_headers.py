@@ -129,3 +129,32 @@ def test_cli_json_output(mock_inspect, monkeypatch, capsys):
             "value": None,
         },
     ]
+
+
+@patch("security_engineering_lab.cli.inspect_headers")
+def test_cli_passes_custom_timeout(mock_inspect, monkeypatch):
+    mock_inspect.return_value = []
+
+    monkeypatch.setattr(
+        "sys.argv",
+        ["security-header-inspector", "https://example.com", "--timeout", "3.5"],
+    )
+
+    main()
+
+    mock_inspect.assert_called_once_with("https://example.com", timeout=3.5)
+
+
+@patch("security_engineering_lab.cli.inspect_headers")
+def test_cli_reports_errors_without_traceback(mock_inspect, monkeypatch, capsys):
+    mock_inspect.side_effect = RuntimeError("HTTP request failed: timeout")
+
+    monkeypatch.setattr(
+        "sys.argv",
+        ["security-header-inspector", "https://example.com"],
+    )
+
+    with pytest.raises(SystemExit, match="error: HTTP request failed: timeout"):
+        main()
+
+    assert capsys.readouterr().out == ""
