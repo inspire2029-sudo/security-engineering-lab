@@ -12,6 +12,8 @@ The first utility checks a web application's response headers and reports the pr
 
 It is intentionally limited to passive inspection. It does not exploit endpoints, submit payloads, or attempt to bypass controls.
 
+The CLI supports human-readable output for interactive use and JSON output for automation.
+
 ## Project layout
 
 ```text
@@ -45,6 +47,18 @@ Inspect a URL:
 
 ```bash
 python -m security_engineering_lab.cli https://example.com
+```
+
+Use JSON output:
+
+```bash
+python -m security_engineering_lab.cli https://example.com --json
+```
+
+Set a custom request timeout:
+
+```bash
+python -m security_engineering_lab.cli https://example.com --timeout 5
 ```
 
 Run the test suite:
