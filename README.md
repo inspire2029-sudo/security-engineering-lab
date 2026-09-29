@@ -129,9 +129,12 @@ pytest
 - TLS server-name indication
 - certificate parsing
 - certificate validity analysis
+- remaining-validity calculation
 - structured result objects
 - CLI and JSON output
+- configurable connection timeouts
 - network and TLS error handling
+- malformed-certificate handling
 - mocked TLS tests
 
 ## Scope
