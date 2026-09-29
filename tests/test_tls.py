@@ -1,9 +1,9 @@
 from datetime import datetime, timezone
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
+import ssl
 
 import pytest
-import ssl
 
 from security_engineering_lab.tls import (
     inspect_certificate,
@@ -42,8 +42,8 @@ def test_inspect_certificate_parses_certificate_and_calculates_remaining_days(
     mock_context_factory, mock_create_connection, mock_datetime
 ):
     certificate = {
-        "subject": ((("commonName", "example.com"),),),
-        "issuer": ((("commonName", "Test CA"),),),
+        "subject": ((( "commonName", "example.com"),),),
+        "issuer": ((( "commonName", "Test CA"),),),
         "serialNumber": "ABC123",
         "notBefore": "Jan 01 00:00:00 2030 GMT",
         "notAfter": "Jan 11 00:00:00 2030 GMT",
@@ -82,8 +82,8 @@ def test_inspect_certificate_uses_hostname_for_tls_sni(
         "subject": (),
         "issuer": (),
         "serialNumber": "ABC123",
-        "notBefore": "Jan 01 2030 00:00:00 GMT",
-        "notAfter": "Jan 11 2030 00:00:00 GMT",
+        "notBefore": "Jan 01 00:00:00 2030 GMT",
+        "notAfter": "Jan 11 00:00:00 2030 GMT",
     }
 
     raw_socket = MagicMock()
@@ -98,7 +98,6 @@ def test_inspect_certificate_uses_hostname_for_tls_sni(
     result = inspect_certificate("https://example.com:8443", timeout=5)
 
     assert result.hostname == "example.com"
-
     mock_create_connection.assert_called_once_with("example.com", 8443, timeout=5)
     mock_context_factory.return_value.wrap_socket.assert_called_once_with(
         raw_socket,
