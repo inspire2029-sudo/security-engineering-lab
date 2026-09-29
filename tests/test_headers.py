@@ -36,6 +36,37 @@ def test_inspect_headers_rejects_non_positive_timeout():
         inspect_headers("https://example.com", timeout=0)
 
 
+@pytest.mark.parametrize(
+    "headers, expected_present",
+    [
+        (
+            {
+                "Content-Security-Policy": "default-src 'self'",
+                "Strict-Transport-Security": "max-age=31536000",
+                "X-Content-Type-Options": "nosniff",
+                "Referrer-Policy": "strict-origin-when-cross-origin",
+                "Permissions-Policy": "camera=(), microphone=()",
+            },
+            True,
+        ),
+        ({}, False),
+    ],
+)
+@patch("security_engineering_lab.headers.requests.get")
+def test_inspect_headers_handles_complete_and_empty_results(
+    mock_get, headers, expected_present
+):
+    response = Mock()
+    response.headers = headers
+    response.raise_for_status.return_value = None
+    mock_get.return_value = response
+
+    checks = inspect_headers("https://example.com")
+
+    assert len(checks) == len(RECOMMENDED_HEADERS)
+    assert all(check.present is expected_present for check in checks)
+
+
 @patch("security_engineering_lab.headers.requests.get")
 def test_inspect_headers_reports_presence(mock_get):
     response = Mock()
