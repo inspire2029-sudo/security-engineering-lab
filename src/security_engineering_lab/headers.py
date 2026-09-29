@@ -34,20 +34,24 @@ def validate_url(url: str) -> str:
 def inspect_headers(url: str, timeout: float = 10.0) -> list[HeaderCheck]:
     validate_url(url)
 
-    response = requests.get(
-        url,
-        timeout=timeout,
-        allow_redirects=True,
-    )
-    response.raise_for_status()
+    if timeout <= 0:
+        raise ValueError("timeout must be greater than zero")
 
-    headers = response.headers
+    try:
+        response = requests.get(
+            url,
+            timeout=timeout,
+            allow_redirects=True,
+        )
+        response.raise_for_status()
+    except requests.RequestException as exc:
+        raise RuntimeError(f"HTTP request failed: {exc}") from exc
 
     return [
         HeaderCheck(
             name=name,
-            present=name in headers,
-            value=headers.get(name),
+            present=name in response.headers,
+            value=response.headers.get(name),
         )
         for name in RECOMMENDED_HEADERS
     ]
