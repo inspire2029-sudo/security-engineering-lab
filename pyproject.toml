@@ -11,6 +11,11 @@ dependencies = [
     "requests>=2.31,<3"
 ]
 
+[project.scripts]
+security-header-inspector = "security_engineering_lab.cli:main"
+tls-certificate-inspector = "security_engineering_lab.tls_cli:main"
+security-site-report = "security_engineering_lab.report_cli:main"
+
 [project.optional-dependencies]
 dev = [
     "pytest>=8,<9"
