@@ -39,6 +39,32 @@ The implementation uses Python's standard TLS stack and validates the HTTPS targ
 
 It does not weaken certificate verification or attempt exploitation.
 
+### Combined Site Security Report
+
+The report layer combines the existing HTTP header and TLS certificate checks into one structured result. It does not calculate a security score; it reports observations from the underlying checks.
+
+For HTTPS targets, it includes both HTTP security headers and TLS certificate details. For HTTP targets, the TLS section is reported as not applicable.
+
+Run the combined report:
+
+```bash
+python -m security_engineering_lab.report_cli https://example.com
+```
+
+Use JSON output:
+
+```bash
+python -m security_engineering_lab.report_cli https://example.com --json
+```
+
+Installed console commands are also available after installation:
+
+```bash
+security-header-inspector https://example.com
+tls-certificate-inspector https://example.com
+security-site-report https://example.com
+```
+
 ## Project layout
 
 ```text
@@ -49,7 +75,9 @@ security-engineering-lab/
 │       ├── headers.py
 │       ├── cli.py
 │       ├── tls.py
-│       └── tls_cli.py
+│       ├── tls_cli.py
+│       ├── report.py
+│       └── report_cli.py
 ├── tests/
 │   ├── test_headers.py
 │   └── test_tls.py
@@ -137,6 +165,14 @@ pytest
 - network and TLS error handling
 - malformed-certificate handling
 - mocked TLS tests
+
+### Combined report
+
+- orchestration of existing security checks
+- HTTP/HTTPS protocol branching
+- structured report modeling
+- nested JSON serialization
+- CLI integration testing
 
 ## Scope
 
