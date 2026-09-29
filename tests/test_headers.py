@@ -1,7 +1,9 @@
+import json
 from unittest.mock import Mock, patch
 
 import pytest
 
+from security_engineering_lab.cli import main
 from security_engineering_lab.headers import (
     RECOMMENDED_HEADERS,
     inspect_headers,
@@ -63,3 +65,33 @@ def test_inspect_headers_uses_timeout_and_follows_redirects(mock_get):
         timeout=5,
         allow_redirects=True,
     )
+
+
+@patch("security_engineering_lab.cli.inspect_headers")
+def test_cli_json_output(mock_inspect, monkeypatch, capsys):
+    mock_inspect.return_value = [
+        Mock(name="Content-Security-Policy", present=True, value="default-src 'self'"),
+        Mock(name="Strict-Transport-Security", present=False, value=None),
+    ]
+
+    monkeypatch.setattr(
+        "sys.argv",
+        ["security-header-inspector", "https://example.com", "--json"],
+    )
+
+    main()
+
+    payload = json.loads(capsys.readouterr().out)
+
+    assert payload == [
+        {
+            "name": "Content-Security-Policy",
+            "present": True,
+            "value": "default-src 'self'",
+        },
+        {
+            "name": "Strict-Transport-Security",
+            "present": False,
+            "value": None,
+        },
+    ]
