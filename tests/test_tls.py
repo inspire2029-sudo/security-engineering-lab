@@ -95,14 +95,9 @@ def test_inspect_certificate_uses_hostname_for_tls_sni(
         tls_socket
     )
 
-    with patch(
-        "security_engineering_lab.tls.datetime.strptime",
-        side_effect=[
-            datetime(2030, 1, 1, tzinfo=timezone.utc),
-            datetime(2030, 1, 11, tzinfo=timezone.utc),
-        ],
-    ):
-        inspect_certificate("https://example.com:8443", timeout=5)
+    result = inspect_certificate("https://example.com:8443", timeout=5)
+
+    assert result.hostname == "example.com"
 
     mock_create_connection.assert_called_once_with("example.com", 8443, timeout=5)
     mock_context_factory.return_value.wrap_socket.assert_called_once_with(
