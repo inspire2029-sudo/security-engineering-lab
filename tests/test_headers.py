@@ -1,5 +1,4 @@
 import json
-from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 import pytest
@@ -7,6 +6,7 @@ import requests
 
 from security_engineering_lab.cli import main
 from security_engineering_lab.headers import (
+    HeaderCheck,
     RECOMMENDED_HEADERS,
     inspect_headers,
     validate_url,
@@ -127,12 +127,12 @@ def test_inspect_headers_wraps_http_errors(mock_get):
 @patch("security_engineering_lab.cli.inspect_headers")
 def test_cli_json_output(mock_inspect, monkeypatch, capsys):
     mock_inspect.return_value = [
-        SimpleNamespace(
+        HeaderCheck(
             name="Content-Security-Policy",
             present=True,
             value="default-src 'self'",
         ),
-        SimpleNamespace(
+        HeaderCheck(
             name="Strict-Transport-Security",
             present=False,
             value=None,
