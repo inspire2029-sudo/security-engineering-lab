@@ -3,6 +3,7 @@ from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
 import pytest
+import requests
 
 from security_engineering_lab.cli import main
 from security_engineering_lab.headers import (
@@ -28,6 +29,11 @@ def test_validate_url_accepts_http_and_https():
 def test_validate_url_rejects_invalid_urls(url):
     with pytest.raises(ValueError):
         validate_url(url)
+
+
+def test_inspect_headers_rejects_non_positive_timeout():
+    with pytest.raises(ValueError, match="timeout must be greater than zero"):
+        inspect_headers("https://example.com", timeout=0)
 
 
 @patch("security_engineering_lab.headers.requests.get")
@@ -66,6 +72,25 @@ def test_inspect_headers_uses_timeout_and_follows_redirects(mock_get):
         timeout=5,
         allow_redirects=True,
     )
+
+
+@patch("security_engineering_lab.headers.requests.get")
+def test_inspect_headers_wraps_request_errors(mock_get):
+    mock_get.side_effect = requests.Timeout("connection timed out")
+
+    with pytest.raises(RuntimeError, match="HTTP request failed"):
+        inspect_headers("https://example.com")
+
+
+@patch("security_engineering_lab.headers.requests.get")
+def test_inspect_headers_wraps_http_errors(mock_get):
+    response = Mock()
+    response.headers = {}
+    response.raise_for_status.side_effect = requests.HTTPError("404")
+    mock_get.return_value = response
+
+    with pytest.raises(RuntimeError, match="HTTP request failed"):
+        inspect_headers("https://example.com")
 
 
 @patch("security_engineering_lab.cli.inspect_headers")
