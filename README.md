@@ -6,13 +6,21 @@ The repository is organized as a working lab rather than a collection of unrelat
 
 ## Current work
 
-### HTTP security header inspection
+### Module 01 — HTTP Security Header Inspection
 
-The first utility checks a web application's response headers and reports the presence of a small set of defensive HTTP headers.
+The first module implements a passive HTTP security header inspector.
+
+It checks for a small set of commonly used defensive response headers:
+
+- Content-Security-Policy
+- Strict-Transport-Security
+- X-Content-Type-Options
+- Referrer-Policy
+- Permissions-Policy
+
+The tool validates the target URL, follows redirects, applies a configurable request timeout, handles request and HTTP errors, and reports the inspection results either as human-readable output or JSON.
 
 It is intentionally limited to passive inspection. It does not exploit endpoints, submit payloads, or attempt to bypass controls.
-
-The CLI supports human-readable output for interactive use and JSON output for automation.
 
 ## Project layout
 
@@ -66,6 +74,22 @@ Run the test suite:
 ```bash
 pytest
 ```
+
+## Engineering coverage
+
+Module 01 covers:
+
+- URL validation
+- HTTP requests
+- redirect handling
+- request timeouts
+- HTTP error handling
+- structured result objects
+- CLI design
+- JSON serialization
+- unit testing
+- mocked network boundaries
+- GitHub Actions CI
 
 ## Scope
 
