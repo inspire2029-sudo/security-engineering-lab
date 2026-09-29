@@ -33,7 +33,11 @@ def _serialize_checks(checks: list[HeaderCheck]) -> list[dict[str, object]]:
 
 def main() -> None:
     args = build_parser().parse_args()
-    checks = inspect_headers(args.url)
+
+    try:
+        checks = inspect_headers(args.url)
+    except (RuntimeError, ValueError) as exc:
+        raise SystemExit(f"error: {exc}") from exc
 
     if args.as_json:
         print(json.dumps(_serialize_checks(checks), indent=2))
